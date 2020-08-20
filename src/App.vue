@@ -2,6 +2,7 @@
   <div id="app">
     <Menu></Menu>
     <Intro></Intro>
+    <sui-divider hidden/>
     <Form></Form>
   </div>
 </template>
