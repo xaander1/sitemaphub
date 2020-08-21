@@ -32,7 +32,16 @@
 			<sui-divider hidden />
 			<sui-button @click.prevent="generateSitemaps" color="olive" content="Generate Sitemap" float="right" />
 		</sui-form>	
-		<sui-message v-if="message">
+		<sui-message v-if="message" inverted color="olive">
+			<sui-button 
+			size="mini" 
+			:content="copyStatus?'Copied':'Copy'" 
+			float="right" 
+			:icon="copyStatus?'check circle':'copy'" 
+			:color="copyStatus?'green':'olive'"
+			v-clipboard:copy="message"
+			@click="handleCopyStatus"
+			compact/>
 			<pre>
 				{{message}}
 			</pre>
@@ -42,7 +51,6 @@
 <script>
 	import axios from 'axios'
 	import cheerio from 'cheerio'
-	// import format from 'xml-formatter'
 	export default {
 		data(){
 			return {
@@ -56,6 +64,7 @@
 					'appliances':false
 				},
 				userInput:null,
+				copyStatus:false,
 				message:'',
 				date:(new Date().getDate()+'-'+(new Date().getMonth()+1)+'-'+new Date().getFullYear())
 			}
@@ -79,27 +88,34 @@
 				})
 			},
 			generateSitemaps(){
-				let products = this.userInput.split(',')
-				products.forEach(item=>{
-					//check if in array
-					if(!this.existing.includes(item)){
-						let newItem=item.split(" ").join('+')
-						//loop checkboxes
-						for(let key in this.checkbox){
-							if(this.checkbox[key]){
-								let msg=`
+				this.message=''
+				this.copyStatus=false
+				if(this.userInput){
+					let products = this.userInput.split(',')
+					products.forEach(item=>{
+						//check if in array
+						if(!this.existing.includes(item)){
+							let newItem=item.split(" ").join('+')
+							//loop checkboxes
+							for(let key in this.checkbox){
+								if(this.checkbox[key]){
+									let msg=`
 <url>
-	<loc>
-		https://www.chekiprice.co.ke/${key}/${newItem}
-	</loc>
-	<lastmod>${this.date}</lastmod>
-	<priority>0.5</priority>
+  <loc>
+    https://www.chekiprice.co.ke/${key}/${newItem}
+  </loc>
+  <lastmod>${this.date}</lastmod>
+  <priority>0.5</priority>
 </url>`
-								this.message=this.message+msg
+									this.message=this.message+msg
+								}
 							}
 						}
-					}
-				})
+					})
+				}
+			},
+			handleCopyStatus(){
+				this.copyStatus=true
 			}
 		}
 
