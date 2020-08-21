@@ -1,4 +1,5 @@
-# sitemap
+# sitemapHub
+Generate a smart sitemap from existing sitemap.
 
 ## Project setup
 ```
